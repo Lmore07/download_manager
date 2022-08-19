@@ -36,11 +36,7 @@ class RecyclerAdapter3(val userList: ArrayList<Publicacion>) : RecyclerView.Adap
             imagen=itemView.findViewById(R.id.imageView2)
             itemView.setOnClickListener { v: View ->
                 var position: Int = getAdapterPosition()
-                val intent= Intent(contexto, MainActivity4::class.java)
-                val b = Bundle();
-                b.putString("id", userList[position].id);
-                intent.putExtras(b);
-                ContextCompat.startActivity(contexto, intent, b)
+                //MOSTRAR EN UN WEBVIEW EL DOCUMENTO
                 Snackbar.make(v, "Item Selecccionado $position",
                     Snackbar.LENGTH_LONG).setAction("Actción", null).show()
             }
@@ -52,5 +48,13 @@ class RecyclerAdapter3(val userList: ArrayList<Publicacion>) : RecyclerView.Adap
         holder.txtNombre.text = userList[position].nombres
         holder.txt_fecha.text = userList[position].publicacion
         holder.imagen.setImageResource(userList[position].img)
+
+        holder.imagen.setOnClickListener{v:View ->
+            //DESCARGAR DOCUMENTO
+            var download=MainActivity4()
+            download.BajarDoc(v,"","")
+            Snackbar.make(v, "Item Selecccionado $position",
+                Snackbar.LENGTH_LONG).setAction("Actción", null).show()
+        };
     }
 }

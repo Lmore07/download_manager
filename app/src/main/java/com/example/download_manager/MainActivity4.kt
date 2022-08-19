@@ -1,8 +1,17 @@
 package com.example.download_manager
 
+import android.Manifest
+import android.app.DownloadManager
+import android.content.Context
+import android.content.IntentFilter
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
+import android.view.View
 import android.view.animation.AnimationUtils
+import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
@@ -11,12 +20,30 @@ import com.android.volley.toolbox.Volley
 
 class MainActivity4 : AppCompatActivity() {
 
+    var downloadid: Long = 0
+    lateinit var txt: TextView
+    lateinit var adminPermisos: Administrador_Permisos
     private var layoutManager: RecyclerView.LayoutManager? = null
     private var adapter: RecyclerView.Adapter<RecyclerAdapter3.ViewHolder>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main4)
+
+        //PERMISOS_SOLICITADOS
+        adminPermisos = Administrador_Permisos(this@MainActivity4)
+
+        val permisosSolicitados = ArrayList<String?>()
+        permisosSolicitados.add(Manifest.permission.CAMERA)
+        permisosSolicitados.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        permisosSolicitados.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+        permisosSolicitados.add(Manifest.permission.WRITE_CALENDAR)
+
+        val permisosAprobados:ArrayList<String?>   = adminPermisos.getPermisosAprobados(permisosSolicitados)
+        val listPermisosNOAprob:ArrayList<String?> = adminPermisos.getPermisosNoAprobados(permisosSolicitados)
+
+        adminPermisos.getPermission(listPermisosNOAprob)
+
         val bundle = this.getIntent().getExtras();
         var id=bundle?.getString("id")
         layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
@@ -46,5 +73,30 @@ class MainActivity4 : AppCompatActivity() {
 
 
         queue.add(stringRequest)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        var resp:String  = adminPermisos.onRequestPermissionsResult(requestCode, permissions as Array<String>, grantResults)
+    }
+
+    fun BajarDoc(view: View?, link:String, nombre:String) {
+
+        val manager = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val request =  DownloadManager.Request(Uri.parse(link))
+            .setDescription("Download PDF")
+            .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE or DownloadManager.Request.NETWORK_WIFI)
+            .setTitle(nombre)
+            .setAllowedOverMetered(true)
+            .setVisibleInDownloadsUi(true)
+            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            .setDestinationInExternalFilesDir(this.applicationContext, Environment.DIRECTORY_DOWNLOADS,nombre+".pdf")
+        try {
+            downloadid = manager.enqueue(request)
+            registerReceiver(MyBroadcastReceiver(downloadid), IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+
+        } catch (e: Exception) {
+            Toast.makeText(this.applicationContext, "Error: " + e.message, Toast.LENGTH_LONG).show()
+        }
     }
 }

@@ -36,7 +36,7 @@ class RecyclerAdapter2 (val userList: ArrayList<Volumen>) : RecyclerView.Adapter
         init {
             txtNombre = itemView.findViewById(R.id.txt_nombre)
             txt_doi = itemView.findViewById(R.id.txt_doi)
-            itemImage = itemView.findViewById(R.id.imgAvatar)
+            itemImage = itemView.findViewById(R.id.imagen2)
             txt_fecha=itemView.findViewById(R.id.fecha)
             itemView.setOnClickListener { v: View ->
                 var position: Int = getAdapterPosition()

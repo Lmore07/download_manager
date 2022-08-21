@@ -9,6 +9,7 @@ class Publicacion(a: JSONObject) {
     var publicacion: String
     var id: String
     var img: Int
+    var link:String
 
     companion object {
         @Throws(JSONException::class)
@@ -28,5 +29,14 @@ class Publicacion(a: JSONObject) {
         publicacion = a.getString("date_published").toString()
         id = a.getString("publication_id").toString()
         img=R.drawable.icono_download
+        var asd=a.getJSONArray("galeys")
+        link=""
+        for (i in 0 until asd.length()) {
+            if(asd.getJSONObject(i).getString("label") == "HTML"){
+                link=asd.getJSONObject(1).getString("UrlViewGalley")
+                break;
+            }
+        }
+        var t=0
     }
 }

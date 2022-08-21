@@ -9,8 +9,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat.startActivity
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
+import com.bumptech.glide.Glide
 import com.squareup.picasso.Picasso
 
 class RecyclerAdapter (val userList: ArrayList<Revista>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
@@ -27,8 +28,7 @@ class RecyclerAdapter (val userList: ArrayList<Revista>) : RecyclerView.Adapter<
         contexto=holder.itemView.context;
         holder.txtNombre.text = userList[position].nombres
         holder.txt_abbre.text = userList[position].abreviacion
-
-        Picasso.get().load(userList[position].urlavatar).into(holder.itemImage);
+        Picasso.Builder(contexto).build().load(userList[position].urlavatar).into(holder.itemImage)
     }
 
     override fun getItemCount(): Int {
@@ -43,7 +43,7 @@ class RecyclerAdapter (val userList: ArrayList<Revista>) : RecyclerView.Adapter<
         init {
             txtNombre = itemView.findViewById(R.id.txt_nombre)
             txt_abbre = itemView.findViewById(R.id.txt_doi)
-            itemImage = itemView.findViewById(R.id.imgAvatar)
+            itemImage = itemView.findViewById(R.id.imagen)
 
             itemView.setOnClickListener { v: View  ->
                 var position: Int = getAdapterPosition()
@@ -52,8 +52,7 @@ class RecyclerAdapter (val userList: ArrayList<Revista>) : RecyclerView.Adapter<
                 b.putString("id", userList[position].id);
                 intent.putExtras(b);
                 startActivity(contexto,intent,b)
-                Snackbar.make(v, "Item Selecccionado $position",
-                    Snackbar.LENGTH_LONG).setAction("Actción", null).show()
+
             }
         }
     }

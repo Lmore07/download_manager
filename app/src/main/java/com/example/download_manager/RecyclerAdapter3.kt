@@ -36,9 +36,17 @@ class RecyclerAdapter3(val userList: ArrayList<Publicacion>) : RecyclerView.Adap
             imagen=itemView.findViewById(R.id.imageView2)
             itemView.setOnClickListener { v: View ->
                 var position: Int = getAdapterPosition()
-                //MOSTRAR EN UN WEBVIEW EL DOCUMENTO
-                Snackbar.make(v, "Item Selecccionado $position",
-                    Snackbar.LENGTH_LONG).setAction("Actción", null).show()
+                if (userList[position].link!=""){
+                    val intent= Intent(contexto, MainActivity5::class.java)
+                    val b = Bundle();
+                    b.putString("link", userList[position].link);
+                    intent.putExtras(b);
+                    ContextCompat.startActivity(contexto, intent, b)
+                }else{
+                    Snackbar.make(v, "No existe elemento HTML",
+                        Snackbar.LENGTH_LONG).setAction("Actción", null).show()
+                }
+
             }
         }
     }
